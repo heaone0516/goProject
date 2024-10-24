@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/register.css">
+</head>
+<script src="/static/register.js"></script> <!-- 외부 스크립트 파일 링크 -->
+<body>
+<div class="register-wrapper">
+  <div class="register-box">
+    <h1>회원가입</h1>
+    <form onsubmit="registerUser(event)">
+      <label for="register-username">아이디:</label>
+      <input type="text" id="register-username" name="username" required><br>
+      <label for="register-password">비밀번호:</label>
+      <input type="password" id="register-password" name="password" required><br>
+      <button id="register-button" type="submit">가입하기</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+
+/* 로그인 페이지 */
+.register-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-box {
+    width: 480px;
+}
+
+#register-button {
+    width: 100%;
+    margin-top: 20px;
+}

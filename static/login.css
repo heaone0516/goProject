@@ -1,0 +1,16 @@
+
+/* 로그인 페이지 */
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 480px;
+}
+
+#login-button {
+    width: 100%;
+    margin-top: 20px;
+}

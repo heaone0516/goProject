@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/login.css">
+</head>
+<script src="/static/login.js"></script> <!-- 외부 스크립트 파일 링크 -->
+<body>
+<div class="login-wrapper">
+  <div class="login-box">
+    <h1>로그인</h1>
+    <form id="login-form" onsubmit="event.preventDefault(); loginUser();"> <!-- 여기서 기본 submit 방지 -->
+      <label for="username">아이디:</label>
+      <input type="text" id="login-username" name="username" required><br>
+      <label for="password">비밀번호:</label>
+      <input type="password" id="login-password" name="password" required><br>
+      <button id="login-button" type="submit">로그인</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
