@@ -1,3 +1,30 @@
+// DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    // 검색 폼 제출 시 검색어로 게시물 목록을 필터링
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const searchQuery = document.getElementById('search').value;
+            loadPosts(1, searchQuery); // 검색 시 첫 페이지부터 다시 로드
+        });
+    }
+
+    // 페이지 로드 시 게시물 목록을 불러옴
+    loadPosts();
+
+    // 페이지 로드 시 로그인 상태 확인
+    checkLoginStatus();
+
+    // 처음 페이지 로드 시 기본 1페이지를 로드
+    loadPosts(1); // 기본 1페이지 로드
+
+    // 로그인한 사용자 정보를 받아오는 함수
+    getUserInfo();
+
+});
+
+
 // 게시물 목록을 가져와서 테이블에 렌더링하는 함수
 function loadPosts(page = 1, search = "") {
     let url = `/api/posts?page=${page}&limit=10`;
@@ -7,6 +34,7 @@ function loadPosts(page = 1, search = "") {
         url += `&search=${encodeURIComponent(search)}`;
     }
 
+    // 데이터를 서버에서 fetch로 가져오기
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -14,7 +42,12 @@ function loadPosts(page = 1, search = "") {
             }
             return response.json();
         })
-        .then(posts => {
+        .then(data => {
+            console.log(data);  // 응답 전체를 출력해서 확인 (필요한 경우 제거 가능)
+
+            const posts = data.posts;  // posts 목록만 분리
+            const totalPages = data.totalPages;  // totalPages 값을 분리
+
             const tableBody = document.getElementById('posts-table-body');
             tableBody.innerHTML = ""; // 기존 내용을 초기화
 
@@ -40,7 +73,7 @@ function loadPosts(page = 1, search = "") {
             });
 
             // 페이지네이션 생성
-            createPagination(posts.totalPages, page, search);
+            createPagination(totalPages, page, search);
         })
         .catch(error => {
             console.error('게시물을 불러오는 중 오류 발생:', error);
@@ -49,38 +82,54 @@ function loadPosts(page = 1, search = "") {
 
 // 페이지네이션 버튼을 생성하는 함수
 function createPagination(totalPages, currentPage, search) {
+    console.log("Total Pages:", totalPages);  // totalPages 값 확인
     const paginationDiv = document.querySelector('.pagination');
     paginationDiv.innerHTML = ""; // 기존 페이지네이션 초기화
 
-    const prevButton = document.createElement('a');
-    prevButton.innerHTML = '&laquo;';
-    prevButton.href = 'javascript:void(0);';
-    prevButton.onclick = () => loadPosts(currentPage - 1, search);
-    prevButton.style.pointerEvents = currentPage === 1 ? 'none' : 'auto'; // 첫 페이지에서 비활성화
-    paginationDiv.appendChild(prevButton);
+    // 페이지 수가 1보다 클 때만 페이지네이션을 표시
+    if (totalPages > 1) {
+        // 이전 버튼 생성
+        const prevButton = document.createElement('a');
+        prevButton.innerHTML = '&laquo;';
+        prevButton.href = 'javascript:void(0);';
+        prevButton.onclick = () => loadPosts(currentPage - 1, search);
+        prevButton.style.pointerEvents = currentPage === 1 ? 'none' : 'auto'; // 첫 페이지에서 비활성화
+        paginationDiv.appendChild(prevButton);
 
-    for (let i = 1; i <= totalPages; i++) {
-        const pageButton = document.createElement('a');
-        pageButton.innerHTML = i;
-        pageButton.href = 'javascript:void(0);';
-        pageButton.classList.add(currentPage === i ? 'active' : '');
-        pageButton.onclick = () => loadPosts(i, search);
-        paginationDiv.appendChild(pageButton);
+        // 각 페이지 번호 생성
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('a');
+            pageButton.innerHTML = i;
+            pageButton.href = 'javascript:void(0);';
+
+            // 현재 페이지인 경우에만 'active' 클래스를 추가
+            if (currentPage === i) {
+                pageButton.classList.add('active');
+            }
+
+            pageButton.onclick = () => loadPosts(i, search);
+            paginationDiv.appendChild(pageButton);
+        }
+
+        // 다음 버튼 생성
+        const nextButton = document.createElement('a');
+        nextButton.innerHTML = '&raquo;';
+        nextButton.href = 'javascript:void(0);';
+        nextButton.onclick = () => loadPosts(currentPage + 1, search);
+        nextButton.style.pointerEvents = currentPage === totalPages ? 'none' : 'auto'; // 마지막 페이지에서 비활성화
+        paginationDiv.appendChild(nextButton);
     }
-
-    const nextButton = document.createElement('a');
-    nextButton.innerHTML = '&raquo;';
-    nextButton.href = 'javascript:void(0);';
-    nextButton.onclick = () => loadPosts(currentPage + 1, search);
-    nextButton.style.pointerEvents = currentPage === totalPages ? 'none' : 'auto'; // 마지막 페이지에서 비활성화
-    paginationDiv.appendChild(nextButton);
 }
-
 
 
 // 글 작성 폼을 보여주는 함수
 function createPostForm() {
-    document.getElementById('create-post-form').style.display = 'block'; // 폼을 보여줍니다.
+    // 폼 필드를 초기화
+    document.getElementById('create-title').value = '';   // 제목 필드 초기화
+    document.getElementById('create-content').value = ''; // 내용 필드 초기화
+
+    // 폼을 보여줍니다.
+    document.getElementById('create-post-form').style.display = 'block';
 }
 
 // 게시물 생성 함수
@@ -279,26 +328,18 @@ function checkLoginStatus() {
         .catch(error => console.error('로그인 상태 확인 중 오류 발생:', error));
 }
 
+// 로그인한 사용자 정보를 받아오는 함수
+function getUserInfo() {
+    fetch('/api/get_user')
+        .then(response => response.json())
+        .then(data => {
+            if (data.user_id) {
+                // 작성자 필드에 사용자 아이디 자동 입력
+                document.getElementById('user-id').innerText = data.user_id;
+                document.getElementById('create-author').value = data.user_id;
+            }
+        })
+        .catch(error => console.error('사용자 정보를 불러오는 중 오류 발생:', error));
+}
 
-// DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function () {
-    // 검색 폼 제출 시 검색어로 게시물 목록을 필터링
-    const searchForm = document.getElementById('search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const searchQuery = document.getElementById('search').value;
-            loadPosts(1, searchQuery); // 검색 시 첫 페이지부터 다시 로드
-        });
-    }
 
-    // 페이지 로드 시 게시물 목록을 불러옴
-    loadPosts();
-
-    // 페이지 로드 시 로그인 상태 확인
-    checkLoginStatus();
-
-    // 처음 페이지 로드 시 기본 1페이지를 로드
-    loadPosts(1); // 기본 1페이지 로드
-
-});

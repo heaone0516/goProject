@@ -2,7 +2,7 @@
 function registerUser(event) {
     event.preventDefault(); // 폼이 제출되면 페이지가 새로고침되는 것을 막음
 
-    const username = document.getElementById('register-username').value;
+    const userid = document.getElementById('register-userid').value;
     const password = document.getElementById('register-password').value;
 
     fetch('/api/register', {
@@ -11,7 +11,7 @@ function registerUser(event) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            username: username,
+            userid: userid,
             password: password
         })
     })

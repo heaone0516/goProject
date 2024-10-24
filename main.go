@@ -81,10 +81,11 @@ func main() {
 	http.HandleFunc("/api/posts/edit", handlers.EditPostHandler(db))     // 게시물 수정 조회
 	http.HandleFunc("/api/posts/update", handlers.UpdatePostHandler(db)) // 게시물 수정 처리
 	http.HandleFunc("/api/posts/delete", handlers.DeletePostHandler(db)) // 게시물 삭제 처리
-	http.HandleFunc("/api/register", handlers.RegisterHandler(db))       // 회원가입 API 핸들러
-	http.HandleFunc("/api/login", handlers.LoginHandler(db))             // 로그인 API 핸들러
-	http.HandleFunc("/api/logout", handlers.LogoutHandler())             // 로그아웃 API 핸들러
-	http.HandleFunc("/api/is_logged_in", handlers.IsLoggedInHandler())   // 로그인 여부 확인 API 핸들러
+	http.HandleFunc("/api/register", handlers.RegisterHandler(db))       // 회원가입
+	http.HandleFunc("/api/login", handlers.LoginHandler(db))             // 로그인
+	http.HandleFunc("/api/logout", handlers.LogoutHandler())             // 로그아웃
+	http.HandleFunc("/api/is_logged_in", handlers.IsLoggedInHandler())   // 로그인 여부 확인
+	http.HandleFunc("/api/get_user", handlers.GetUserHandler())          // 로그인 계정 정보 조회
 
 	// 서버 실행
 	log.Println("Server started at :1000")

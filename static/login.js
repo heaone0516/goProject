@@ -1,5 +1,5 @@
 function loginUser() {
-    const username = document.getElementById('login-username').value;
+    const userid = document.getElementById('login-userid').value;
     const password = document.getElementById('login-password').value;
 
     fetch('/api/login', {
@@ -8,7 +8,7 @@ function loginUser() {
             'Content-Type': 'application/json'  // JSON 형식으로 전송
         },
         body: JSON.stringify({
-            username: username,
+            userid: userid,
             password: password
         })
     })
