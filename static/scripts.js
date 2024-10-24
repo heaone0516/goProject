@@ -1,30 +1,3 @@
-// DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function () {
-    // 검색 폼 제출 시 검색어로 게시물 목록을 필터링
-    const searchForm = document.getElementById('search-form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const searchQuery = document.getElementById('search').value;
-            loadPosts(1, searchQuery); // 검색 시 첫 페이지부터 다시 로드
-        });
-    }
-
-    // 페이지 로드 시 게시물 목록을 불러옴
-    loadPosts();
-
-    // 페이지 로드 시 로그인 상태 확인
-    checkLoginStatus();
-
-    // 처음 페이지 로드 시 기본 1페이지를 로드
-    loadPosts(1); // 기본 1페이지 로드
-
-    // 로그인한 사용자 정보를 받아오는 함수
-    getUserInfo();
-
-});
-
-
 // 게시물 목록을 가져와서 테이블에 렌더링하는 함수
 function loadPosts(page = 1, search = "") {
     let url = `/api/posts?page=${page}&limit=10`;
@@ -125,8 +98,7 @@ function createPagination(totalPages, currentPage, search) {
 // 글 작성 폼을 보여주는 함수
 function createPostForm() {
     // 폼 필드를 초기화
-    document.getElementById('create-title').value = '';   // 제목 필드 초기화
-    document.getElementById('create-content').value = ''; // 내용 필드 초기화
+    clearPostForm('create');
 
     // 폼을 보여줍니다.
     document.getElementById('create-post-form').style.display = 'block';
@@ -273,8 +245,7 @@ function deletePost(postId) {
 function clearPostForm(formType) {
     if (formType === 'create') {
         document.getElementById('create-title').value = '';
-        document.getElementById('create-content').value = '';
-        document.getElementById('create-author').value = '';
+        document.getElementById('create-content').value = ''
     } else if (formType === 'edit') {
         document.getElementById('edit-title').value = '';
         document.getElementById('edit-content').value = '';
@@ -287,29 +258,26 @@ function clearPostForm(formType) {
 
 // 로그아웃 함수 정의
 function logoutUser() {
-    fetch('/api/logout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === '로그아웃 성공') {
-                alert('로그아웃이 완료되었습니다.');
-                window.location.href = '/index'; // 로그아웃 후 로그인 페이지로 리다이렉트
-            } else {
-                alert('로그아웃 실패: ' + data.message);
-            }
-        })
-        .catch(error => console.error('로그아웃 중 오류 발생:', error));
+    // localStorage에서 토큰 제거 (로그아웃은 서버에서 처리할 필요 없음)
+    localStorage.removeItem('token');
+    alert('로그아웃이 완료되었습니다.');
+    window.location.href = '/';
 }
 
 // 로그인 여부 확인 함수
 function checkLoginStatus() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        // 로그인 상태가 아니면 로그인/회원가입 버튼 표시
+        document.getElementById('login-section').style.display = 'block';
+        document.getElementById('logout-section').style.display = 'none';
+        return;
+    }
+
     fetch('/api/is_logged_in', {
         method: 'GET',
         headers: {
+            'Authorization': `Bearer ${token}`,  // 토큰을 Authorization 헤더에 추가
             'Content-Type': 'application/json'
         }
     })
@@ -330,7 +298,19 @@ function checkLoginStatus() {
 
 // 로그인한 사용자 정보를 받아오는 함수
 function getUserInfo() {
-    fetch('/api/get_user')
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.log('토큰이 없습니다.');
+        return;
+    }
+
+    fetch('/api/get_user', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,  // 토큰을 Authorization 헤더에 추가
+            'Content-Type': 'application/json'
+        }
+    })
         .then(response => response.json())
         .then(data => {
             if (data.user_id) {
@@ -343,3 +323,28 @@ function getUserInfo() {
 }
 
 
+// DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function () {
+    // 검색 폼 제출 시 검색어로 게시물 목록을 필터링
+    const searchForm = document.getElementById('search-form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const searchQuery = document.getElementById('search').value;
+            loadPosts(1, searchQuery); // 검색 시 첫 페이지부터 다시 로드
+        });
+    }
+
+    // 페이지 로드 시 게시물 목록을 불러옴
+    loadPosts();
+
+    // 페이지 로드 시 로그인 상태 확인
+    checkLoginStatus();
+
+    // 처음 페이지 로드 시 기본 1페이지를 로드
+    loadPosts(1); // 기본 1페이지 로드
+
+    // 로그인한 사용자 정보를 받아오는 함수
+    getUserInfo();
+
+});

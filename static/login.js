@@ -1,3 +1,4 @@
+// 로그인 후 토큰 저장
 function loginUser() {
     const userid = document.getElementById('login-userid').value;
     const password = document.getElementById('login-password').value;
@@ -5,26 +6,34 @@ function loginUser() {
     fetch('/api/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'  // JSON 형식으로 전송
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            userid: userid,
-            password: password
-        })
+        body: JSON.stringify({ userid, password })
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message); });
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.message === '로그인 성공') {
+            if (data.token) {
+                // 토큰 저장 (예: localStorage)
+                localStorage.setItem('token', data.token);
                 alert('로그인 성공!');
-                window.location.href = '/'; // 메인 페이지로 리다이렉트
+                window.location.href = '/';
             } else {
-                alert('로그인 실패: ' + data.message);
+                alert('로그인 실패');
             }
-        })
-        .catch(error => console.error('로그인 중 오류 발생:', error));
+        });
+}
+
+// API 호출 시 토큰 포함
+function fetchProtectedData() {
+    const token = localStorage.getItem('token');
+    fetch('/api/protected', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        });
 }
