@@ -89,7 +89,7 @@ table thead {
 }
 
 table th, table td {
-    padding: 10px;
+    padding: 5px;
     text-align: center;
     border-bottom: 1px solid #ddd;
 }
