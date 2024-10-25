@@ -15,6 +15,7 @@ type Post struct {
 	CreatedAt string `json:"created_at"`
 }
 
+// 게시판 리스트 가져오는 핸들러
 func ListPostsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// 쿼리 파라미터에서 page, limit, search 값 가져오기
@@ -98,6 +99,27 @@ func ListPostsHandler(db *sql.DB) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(response) // JSON으로 응답
+	}
+}
+
+// GetPostHandler - 특정 게시물 조회 핸들러
+func GetPostHandler(db *sql.DB, postID string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var post Post
+		err := db.QueryRow("SELECT id, title, content, author, created_at FROM posts WHERE id = ?", postID).Scan(
+			&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt,
+		)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, "Post not found", http.StatusNotFound)
+				return
+			}
+			http.Error(w, "Database error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(post) // 게시물 정보를 JSON으로 반환
 	}
 }
 

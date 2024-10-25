@@ -33,8 +33,7 @@ function loadPosts(page = 1, search = "") {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                 <td>${post.id}</td>
-                <td>${post.title}</td>
-                <td>${post.content}</td>
+                <td><a href="javascript:void(0);" onclick="fetchPostDetails(${post.id})">${post.title}</a></td>
                 <td>${post.author}</td>
                 <td>${post.created_at}</td>
                 <td>
@@ -53,6 +52,28 @@ function loadPosts(page = 1, search = "") {
         });
 }
 
+// 특정 게시물 상세 내용을 불러오는 함수
+function fetchPostDetails(postId) {
+    fetch(`/api/posts/${postId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('게시물 내용을 불러오는 데 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(post => {
+            // 게시물 내용을 표시하는 부분
+            const postDetails = document.getElementById('post-details');
+            postDetails.innerHTML = `
+                <h2 id="post-title">${post.title}</h2>
+                <p id="post-content">${post.content}</p>
+            `;
+            postDetails.style.display = 'block';  // 게시물 내용을 화면에 표시
+        })
+        .catch(error => {
+            console.error('게시물 내용을 불러오는 중 오류 발생:', error);
+        });
+}
 // 페이지네이션 버튼을 생성하는 함수
 function createPagination(totalPages, currentPage, search) {
     console.log("Total Pages:", totalPages);  // totalPages 값 확인

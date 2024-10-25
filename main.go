@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // 템플릿 캐싱
@@ -81,10 +82,25 @@ func main() {
 	http.HandleFunc("/api/posts/edit", handlers.EditPostHandler(db))     // 게시물 수정 조회
 	http.HandleFunc("/api/posts/update", handlers.UpdatePostHandler(db)) // 게시물 수정 처리
 	http.HandleFunc("/api/posts/delete", handlers.DeletePostHandler(db)) // 게시물 삭제 처리
-	http.HandleFunc("/api/register", handlers.RegisterHandler(db))       // 회원가입
-	http.HandleFunc("/api/login", handlers.LoginHandler(db))             // 로그인
-	http.HandleFunc("/api/is_logged_in", handlers.IsLoggedInHandler())   // 로그인 여부 확인
-	http.HandleFunc("/api/get_user", handlers.GetUserHandler())          // 로그인 계정 정보 조회
+
+	// 특정 게시물 조회 핸들러 추가 (GET 요청 처리)
+	http.HandleFunc("/api/posts/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			// 게시물 ID 추출 (/api/posts/{id}에서 id 추출)
+			id := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+			if id == "" {
+				http.Error(w, "Missing post ID", http.StatusBadRequest)
+				return
+			}
+			handlers.GetPostHandler(db, id)(w, r) // 특정 게시물 조회
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/api/register", handlers.RegisterHandler(db))     // 회원가입
+	http.HandleFunc("/api/login", handlers.LoginHandler(db))           // 로그인
+	http.HandleFunc("/api/is_logged_in", handlers.IsLoggedInHandler()) // 로그인 여부 확인
+	http.HandleFunc("/api/get_user", handlers.GetUserHandler())        // 로그인 계정 정보 조회
 
 	// 서버 실행
 	log.Println("Server started at :1000")
