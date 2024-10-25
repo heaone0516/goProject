@@ -74,6 +74,7 @@ function fetchPostDetails(postId) {
             console.error('게시물 내용을 불러오는 중 오류 발생:', error);
         });
 }
+
 // 페이지네이션 버튼을 생성하는 함수
 function createPagination(totalPages, currentPage, search) {
     console.log("Total Pages:", totalPages);  // totalPages 값 확인
@@ -86,7 +87,10 @@ function createPagination(totalPages, currentPage, search) {
         const prevButton = document.createElement('a');
         prevButton.innerHTML = '&laquo;';
         prevButton.href = 'javascript:void(0);';
-        prevButton.onclick = () => loadPosts(currentPage - 1, search);
+        prevButton.onclick = () => {
+            loadPosts(currentPage - 1, search);
+            document.getElementById('post-details').style.display = 'none'; // 페이지 전환 시 내용 숨기기
+        };
         prevButton.style.pointerEvents = currentPage === 1 ? 'none' : 'auto'; // 첫 페이지에서 비활성화
         paginationDiv.appendChild(prevButton);
 
@@ -101,7 +105,10 @@ function createPagination(totalPages, currentPage, search) {
                 pageButton.classList.add('active');
             }
 
-            pageButton.onclick = () => loadPosts(i, search);
+            pageButton.onclick = () => {
+                loadPosts(i, search);
+                document.getElementById('post-details').style.display = 'none'; // 페이지 전환 시 내용 숨기기
+            };
             paginationDiv.appendChild(pageButton);
         }
 
@@ -109,7 +116,10 @@ function createPagination(totalPages, currentPage, search) {
         const nextButton = document.createElement('a');
         nextButton.innerHTML = '&raquo;';
         nextButton.href = 'javascript:void(0);';
-        nextButton.onclick = () => loadPosts(currentPage + 1, search);
+        nextButton.onclick = () => {
+            loadPosts(currentPage + 1, search);
+            document.getElementById('post-details').style.display = 'none'; // 페이지 전환 시 내용 숨기기
+        };
         nextButton.style.pointerEvents = currentPage === totalPages ? 'none' : 'auto'; // 마지막 페이지에서 비활성화
         paginationDiv.appendChild(nextButton);
     }
@@ -344,6 +354,9 @@ function getUserInfo() {
 }
 
 
+
+
+
 // DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
     // 검색 폼 제출 시 검색어로 게시물 목록을 필터링
@@ -353,6 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             const searchQuery = document.getElementById('search').value;
             loadPosts(1, searchQuery); // 검색 시 첫 페이지부터 다시 로드
+            document.getElementById('post-details').style.display = 'none'; // 검색 시 내용 숨김
         });
     }
 
