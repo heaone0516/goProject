@@ -1,11 +1,26 @@
-<header>
-    <nav class="navbar">
-        <ul class="nav-list">
-            <li><a href="/">Home</a></li>
-            <li><a href="/posts">Posts</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-            <li><a href="/logout" id="logout-link" style="display: none;">Logout</a></li>
-        </ul>
-    </nav>
-</header>
+{{define "header"}}
+    <header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/posts">Posts</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="#" id="logout-link" style="display: none;" onclick="logoutUser()">Logout</a></li>
+            </ul>
+{{/*            <!-- 로그인/로그아웃 버튼 -->*/}}
+{{/*            <div style="margin-bottom: 20px;">*/}}
+{{/*                <div id="login-section" style="display: none;">*/}}
+{{/*                    <button type="button" class="login-btn">로그인</button>*/}}
+{{/*                    <button type="button" class="register-btn">회원가입</button>*/}}
+{{/*                </div>*/}}
+{{/*                <div id="logout-section" style="display: none;">*/}}
+{{/*                    <div style="margin-bottom: 20px;">*/}}
+{{/*                        <p><span id="user-id"></span>님, 안녕하세요.</p>*/}}
+{{/*                        <button type="button" onclick="logoutUser();">로그아웃</button>*/}}
+{{/*                    </div>*/}}
+{{/*                </div>*/}}
+{{/*            </div>*/}}
+        </nav>
+    </header>
+{{end}}
