@@ -1,0 +1,235 @@
+
+h1 {
+    text-align: center;
+    color: #1c5d8b; /* 낮은 채도의 블루 */
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+/* Form and table container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* Buttons */
+button {
+    background-color: #597a98; /* 낮은 채도의 차분한 블루 */
+    color: #fff;
+    padding: 7px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+    background-color: #4e6b85; /* 더 어두운 톤의 블루 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Input fields */
+input[type="text"],
+input[type="password"],
+textarea {
+    width: 100%;
+    padding: 7px;
+    margin-top: 3px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+/* Readonly input fields */
+input[readonly] {
+    background-color: #f9f9f9; /* 읽기 전용 입력 필드 배경색 */
+    border: 1px solid #ddd;     /* 약간 흐린 테두리 */
+    color: #888;                /* 텍스트 색상도 흐리게 설정 */
+    cursor: not-allowed;        /* 커서를 비활성화된 느낌으로 설정 */
+}
+
+/* Search bar */
+#search {
+    padding: 7px;
+    width: 250px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table thead {
+    border-top: 1px solid #bbb;
+}
+
+table th, table td {
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+th {
+    font-size: 0.9rem;
+}
+
+td {
+    font-size: 0.8rem;
+}
+
+
+/* Popup form */
+.common-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.common-popup-box-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.common-popup-box {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    max-width: 100%;
+}
+
+.common-popup-box h2 {
+    text-align: center;
+    color: #1c5d8b;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.common-popup-box form {
+    display: flex;
+    flex-direction: column;
+}
+
+.common-popup-box form label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 3px;
+}
+
+.common-popup-box form button {
+    margin-top: 7px;
+}
+
+/* Action and cancel buttons */
+.action-button {
+    background-color: #597a98; /* 낮은 채도의 차분한 블루 */
+    border: none;
+    color: white;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #4e6b85;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-button {
+    background-color: #c96e6b; /* 낮은 채도의 차분한 레드 */
+    color: white;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px 0;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #b15a58; /* 더 어두운 톤의 레드 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+}
+
+.pagination a {
+    color: #597a98;
+    float: left;
+    padding: 6px 12px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    border: 1px solid #ddd;
+    margin: 0 3px;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background-color: #597a98;
+    color: white;
+    border: 1px solid #597a98;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+/* 게시물 상세 내용 컨테이너 */
+.post-details {
+    display: none; /* 처음에는 숨김 상태 */
+    background-color: #f9f9f9; /* 부드러운 배경색 */
+    border: 1px solid #ddd; /* 테두리 */
+    border-radius: 8px; /* 둥근 모서리 */
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+    max-width: 100%; /* 게시물 크기 조정 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 게시물 제목 스타일 */
+#post-title {
+    font-size: 1.2rem; /* 제목 크기를 줄임 */
+    font-weight: bold;
+    color: #333; /* 내용과 동일한 색상으로 변경 */
+    margin-bottom: 15px;
+}
+
+/* 게시물 내용 스타일 */
+#post-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333; /* 제목과 동일한 색상 */
+    white-space: pre-wrap; /* 줄바꿈 보존 */
+    margin-bottom: 10px;
+}

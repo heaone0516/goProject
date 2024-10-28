@@ -1,0 +1,29 @@
+/* Navbar styling */
+.navbar {
+    width: 100%;
+    background-color: #1c5d8b;
+    color: #fff;
+    padding: 15px;
+}
+
+.nav-list {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.nav-list li {
+    display: inline;
+}
+
+.nav-list a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-list a:hover {
+    color: #f0f0f0;
+}
