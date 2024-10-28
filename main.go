@@ -14,6 +14,7 @@ var tmpl = template.Must(template.ParseFiles(
 	"templates/login.html",
 	"templates/index.html",
 	"templates/register.html",
+	"templates/refresh-posts.html",
 ))
 
 // 로그인 페이지 핸들러
@@ -46,6 +47,16 @@ func registerPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// 새로고침 게시판 핸들러
+func refreshPostsPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		// 회원가입 페이지 렌더링
+		tmpl.ExecuteTemplate(w, "refresh-posts.html", nil)
+	} else {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
 func main() {
 	// DB 연결
 	db, err := config.ConnectDB() // config 패키지에서 DB 연결 설정 호출
@@ -66,6 +77,9 @@ func main() {
 
 	// 회원가입 페이지 핸들러 추가
 	http.HandleFunc("/register", registerPageHandler)
+
+	//새로고침 게시판
+	http.HandleFunc("/refresh-posts", refreshPostsPageHandler)
 
 	// 핸들러 설정 (ServeMux 사용하여 경로와 메서드 처리)
 	http.HandleFunc("/api/posts", func(w http.ResponseWriter, r *http.Request) {

@@ -8,59 +8,54 @@
 </head>
 <script src="/static/js/common/scripts.js"></script> <!-- 외부 스크립트 파일 링크 -->
 <body>
-<header>
-    <button type="button" onclick="window.location.href='/refresh-posts'">새로고침 게시판</button>
-</header>
+<h1>새로고침 게시판</h1>
 
+<!-- 로그인/로그아웃 버튼 -->
+<div style="margin-bottom: 20px;">
+    <div id="login-section" style="display: none;">
+        <button type="button" onclick="window.location.href='/login'">로그인</button>
+        <button type="button" onclick="window.location.href='/register'">회원가입</button>
+    </div>
 
-    <h1>게시글 목록</h1>
-
-    <!-- 로그인/로그아웃 버튼 -->
-    <div style="margin-bottom: 20px;">
-        <div id="login-section" style="display: none;">
-            <button type="button" onclick="window.location.href='/login'">로그인</button>
-            <button type="button" onclick="window.location.href='/register'">회원가입</button>
-        </div>
-
-        <div id="logout-section" style="display: none;">
-            <div style="margin-bottom: 20px;">
-                <p><span id="user-id"></span>님, 안녕하세요.</p>
-                <button type="button" onclick="logoutUser();">로그아웃</button>
-                <!-- 새 글 작성 버튼 (로그인 상태에서만 표시) -->
-                <button id="create-submit-button" type="button" onclick="createPostForm()">새 글 작성</button>
-            </div>
+    <div id="logout-section" style="display: none;">
+        <div style="margin-bottom: 20px;">
+            <p><span id="user-id"></span>님, 안녕하세요.</p>
+            <button type="button" onclick="logoutUser();">로그아웃</button>
+            <!-- 새 글 작성 버튼 (로그인 상태에서만 표시) -->
+            <button id="create-submit-button" type="button" onclick="createPostForm()">새 글 작성</button>
         </div>
     </div>
+</div>
 
-    <!-- 검색바 -->
-    <div style="margin-bottom: 20px;">
-        <form id="search-form">
-            <input type="text" id="search" name="search" placeholder="검색어를 입력하세요">
-            <button type="submit">검색</button>
-        </form>
-    </div>
+<!-- 검색바 -->
+<div style="margin-bottom: 20px;">
+    <form id="search-form">
+        <input type="text" id="search" name="search" placeholder="검색어를 입력하세요">
+        <button type="submit">검색</button>
+    </form>
+</div>
 
 
-    <!-- 게시물 내용을 표시 -->
-    <div id="post-details" class="post-details" style="display: none;">
-    </div>
+<!-- 게시물 내용을 표시 -->
+<div id="post-details" class="post-details" style="display: none;">
+</div>
 
-    <!-- 게시글 목록 -->
-    <table class="styled-table">
-        <thead>
-        <tr>
-            <th>No.</th>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>작성일자</th>
-            <th>삭제</th>
-        </tr>
-        </thead>
-        <tbody id="posts-table-body"> <!-- 이 ID가 스크립트와 일치해야 합니다 -->
-        </tbody>
-    </table>
-    <!-- Pagination -->
-    <div class="pagination"></div>
+<!-- 게시글 목록 -->
+<table class="styled-table">
+    <thead>
+    <tr>
+        <th>No.</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일자</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody id="posts-table-body"> <!-- 이 ID가 스크립트와 일치해야 합니다 -->
+    </tbody>
+</table>
+<!-- Pagination -->
+<div class="pagination"></div>
 
 
 </body>

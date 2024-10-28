@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -18,60 +19,59 @@ type Post struct {
 // 게시판 리스트 가져오는 핸들러
 func ListPostsHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("ListPostsHandler started")
+
 		// 쿼리 파라미터에서 page, limit, search 값 가져오기
 		pageStr := r.URL.Query().Get("page")
 		limitStr := r.URL.Query().Get("limit")
 		searchQuery := r.URL.Query().Get("search")
 
-		// 기본값 설정 (page = 1, limit = 10)
 		page := 1
 		limit := 10
 		var err error
 
-		// page와 limit이 쿼리 파라미터로 제공된 경우 변환
 		if pageStr != "" {
 			page, err = strconv.Atoi(pageStr)
 			if err != nil || page < 1 {
-				page = 1 // 잘못된 값이면 1페이지로 설정
+				log.Println("Invalid page parameter, setting default to 1")
+				page = 1
 			}
 		}
 
 		if limitStr != "" {
 			limit, err = strconv.Atoi(limitStr)
 			if err != nil || limit < 1 {
-				limit = 10 // 잘못된 값이면 기본 limit 사용
+				log.Println("Invalid limit parameter, setting default to 10")
+				limit = 10
 			}
 		}
 
-		// 검색 쿼리 설정
-		var rows *sql.Rows
 		offset := (page - 1) * limit
-		query := "SELECT id, title, content, author, created_at FROM posts"
-		countQuery := "SELECT COUNT(*) FROM posts"
-		params := []interface{}{}
 
+		// 기본 쿼리
+		query := "SELECT id, title, content, author, created_at FROM posts ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?"
+		params := []interface{}{limit, offset}
+
+		// 검색어가 있을 경우
 		if searchQuery != "" {
 			searchTerm := "%" + searchQuery + "%"
-			query += " WHERE title LIKE ? OR content LIKE ?"
-			countQuery += " WHERE title LIKE ? OR content LIKE ?"
-			params = append(params, searchTerm, searchTerm)
+			query = "SELECT id, title, content, author, created_at FROM posts WHERE title LIKE ? OR content LIKE ? ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?"
+			params = append([]interface{}{searchTerm, searchTerm}, limit, offset)
 		}
 
-		// 전체 게시물 수 조회 (페이지네이션 계산을 위해)
+		// 전체 게시물 수 조회
 		var totalRecords int
-		err = db.QueryRow(countQuery, params...).Scan(&totalRecords)
+		err = db.QueryRow("SELECT COUNT(*) FROM posts").Scan(&totalRecords)
 		if err != nil {
+			log.Printf("Total count query failed: %v", err)
 			http.Error(w, "게시물 총 개수 조회 실패", http.StatusInternalServerError)
 			return
 		}
 
-		// 페이지네이션을 위한 SQL 쿼리 추가
-		query += " LIMIT ? OFFSET ?"
-		params = append(params, limit, offset)
-
 		// 게시물 조회
-		rows, err = db.Query(query, params...)
+		rows, err := db.Query(query, params...)
 		if err != nil {
+			log.Printf("Error fetching posts: %v", err)
 			http.Error(w, "데이터 조회 실패", http.StatusInternalServerError)
 			return
 		}
@@ -80,25 +80,26 @@ func ListPostsHandler(db *sql.DB) http.HandlerFunc {
 		var posts []Post
 		for rows.Next() {
 			var post Post
-			err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt)
-			if err != nil {
+			if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.CreatedAt); err != nil {
+				log.Printf("Error scanning post data: %v", err)
 				http.Error(w, "데이터 파싱 실패", http.StatusInternalServerError)
 				return
 			}
 			posts = append(posts, post)
 		}
 
-		// 총 페이지 수 계산
 		totalPages := (totalRecords + limit - 1) / limit
 
-		// 응답 데이터 생성
 		response := map[string]interface{}{
 			"posts":      posts,
 			"totalPages": totalPages,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response) // JSON으로 응답
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			log.Printf("Error encoding response: %v", err)
+			http.Error(w, "응답 데이터 변환 실패", http.StatusInternalServerError)
+		}
 	}
 }
 
