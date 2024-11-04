@@ -11,25 +11,24 @@
 <header>
     <button type="button" onclick="window.location.href='/refresh-posts'">새로고침 게시판</button>
 </header>
-
-
     <h1>게시글 목록</h1>
 
     <!-- 로그인/로그아웃 버튼 -->
     <div style="margin-bottom: 20px;">
-        <div id="login-section" style="display: none;">
-            <button type="button" onclick="window.location.href='/login'">로그인</button>
-            <button type="button" onclick="window.location.href='/register'">회원가입</button>
-        </div>
+        {{ if .IsLoggedIn }}
+            <!-- 로그인 상태 -->
 
-        <div id="logout-section" style="display: none;">
-            <div style="margin-bottom: 20px;">
-                <p><span id="user-id"></span>님, 안녕하세요.</p>
+                <p><span id="user-id">{{.UserID}}</span>님, 안녕하세요.</p>
                 <button type="button" onclick="logoutUser();">로그아웃</button>
-                <!-- 새 글 작성 버튼 (로그인 상태에서만 표시) -->
                 <button id="create-submit-button" type="button" onclick="createPostForm()">새 글 작성</button>
-            </div>
-        </div>
+
+        {{ else }}
+            <!-- 로그아웃 상태 -->
+
+                <button type="button" onclick="window.location.href='/login'">로그인</button>
+                <button type="button" onclick="window.location.href='/register'">회원가입</button>
+
+        {{ end }}
     </div>
 
     <!-- 검색바 -->

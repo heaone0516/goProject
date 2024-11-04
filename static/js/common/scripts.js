@@ -295,39 +295,24 @@ function logoutUser() {
     window.location.href = '/';
 }
 
-// 로그인 여부 확인 함수
+// 로그인 상태 확인 함수
 function checkLoginStatus() {
     const token = localStorage.getItem('token');
-    if (!token) {
-        // 로그인 상태가 아니면 로그인/회원가입 버튼 표시
-        document.getElementById('login-section').style.display = 'block';
-        document.getElementById('logout-section').style.display = 'none';
-        return;
-    }
-
     fetch('/api/is_logged_in', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,  // 토큰을 Authorization 헤더에 추가
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     })
         .then(response => response.json())
         .then(data => {
-            if (data.is_logged_in) {
-                // 로그인 상태라면 로그아웃 버튼 표시
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('logout-section').style.display = 'block';
-            } else {
-                // 로그인 상태가 아니면 로그인/회원가입 버튼 표시
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('logout-section').style.display = 'none';
-            }
+
         })
         .catch(error => console.error('로그인 상태 확인 중 오류 발생:', error));
 }
 
-// 로그인한 사용자 정보를 받아오는 함수
+// 사용자 정보를 받아오는 함수
 function getUserInfo() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -338,22 +323,36 @@ function getUserInfo() {
     fetch('/api/get_user', {
         method: 'GET',
         headers: {
-            'Authorization': `Bearer ${token}`,  // 토큰을 Authorization 헤더에 추가
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('인증 실패: 유효하지 않은 토큰');
+                }
+                throw new Error('사용자 정보를 불러오는 중 오류 발생');
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.user_id) {
-                // 작성자 필드에 사용자 아이디 자동 입력
-                document.getElementById('user-id').innerText = data.user_id;
-                document.getElementById('create-author').value = data.user_id;
+            const userIdElement = document.getElementById('user-id');
+            if (data.user_id && userIdElement) {
+                userIdElement.innerText = data.user_id;
             }
         })
-        .catch(error => console.error('사용자 정보를 불러오는 중 오류 발생:', error));
+        .catch(error => {
+            console.error(error.message);
+            alert(error.message);
+        });
 }
 
-
+// DOMContentLoaded 시점에 확인 함수 호출
+document.addEventListener('DOMContentLoaded', function () {
+    checkLoginStatus();
+    getUserInfo();
+});
 
 
 

@@ -17,21 +17,35 @@ var tmpl = template.Must(template.ParseFiles(
 	"templates/refresh-posts.html",
 ))
 
-// 로그인 페이지 핸들러
-func loginPageHandler(w http.ResponseWriter, r *http.Request) {
+// 로그인 상태 확인 함수
+func isLoggedIn(r *http.Request) (bool, string) {
+	token, err := r.Cookie("token") // 쿠키에서 토큰을 가져옵니다.
+	if err != nil || token.Value == "" {
+		return false, "" // 쿠키가 없거나 토큰이 비어있다면 로그인 상태가 아님
+	}
+	userID := "exampleUserID" // 여기에 토큰 검증 로직을 추가하여 실제 사용자 ID를 가져옵니다.
+	return true, userID
+}
+
+// 인덱스 페이지 핸들러
+func indexPageHandler(w http.ResponseWriter, r *http.Request) {
+	loggedIn, userID := isLoggedIn(r)
+	data := map[string]interface{}{
+		"Title":      "홈",
+		"IsLoggedIn": loggedIn,
+		"UserID":     userID,
+	}
 	if r.Method == http.MethodGet {
-		// 로그인 페이지 렌더링
-		tmpl.ExecuteTemplate(w, "login.html", nil)
+		tmpl.ExecuteTemplate(w, "index.html", data)
 	} else {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-// 인덱스 페이지 핸들러
-func indexPageHandler(w http.ResponseWriter, r *http.Request) {
+// 로그인 페이지 핸들러
+func loginPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		// 인덱스 페이지 렌더링
-		tmpl.ExecuteTemplate(w, "index.html", nil)
+		tmpl.ExecuteTemplate(w, "login.html", nil)
 	} else {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
